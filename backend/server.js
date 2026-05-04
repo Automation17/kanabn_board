@@ -13,7 +13,7 @@ const taskRoutes = require('./routes/task.router');
 
 // Load environment variables from .env file
 dotenv.config();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 
 // Connect to MongoDB
 connectDB();
