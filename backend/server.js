@@ -12,8 +12,8 @@ const authRoutes = require('./routes/auth.routes');
 const taskRoutes = require('./routes/task.router');
 
 // Load environment variables from .env file
-const PORT = process.env.PORT;
 dotenv.config();
+const PORT = process.env.PORT;
 
 // Connect to MongoDB
 connectDB();
