@@ -10,7 +10,7 @@ export function useSocket(onTaskEvent) {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:5000");
+    socketRef.current = io(import.meta.env.VITE_API_URL);
 
     socketRef.current.on("taskCreated", (task) => onTaskEvent("added", task));
     socketRef.current.on("taskUpdated", (task) => onTaskEvent("moved", task));
