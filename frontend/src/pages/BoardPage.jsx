@@ -23,6 +23,7 @@ const STATUSES = ["todo", "inProgress", "done"];
 export default function BoardPage() {
   const { token, user, logout } = useAuth();
   const [tasks, setTasks] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -57,6 +58,23 @@ export default function BoardPage() {
     fetchTasks();
   }, []);
 
+  // ─── Fetch all users (for assignee dropdown) ──────────────
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/users`, {
+          headers: authHeader(),
+        });
+        if (!res.ok) throw new Error("Failed to fetch users");
+        const data = await res.json();
+        setUsers(data);
+      } catch (err) {
+        console.error("Could not load users:", err.message);
+      }
+    }
+    fetchUsers();
+  }, []);
+
   // ─── Real-time updates ───────────────────────────────────
   function handleTaskEvent(type, payload) {
     if (type === "added") {
@@ -76,11 +94,11 @@ export default function BoardPage() {
   const socketRef = useSocket(handleTaskEvent);
 
   // ─── Add task ────────────────────────────────────────────
-  async function handleAddTask({ title, description }) {
+  async function handleAddTask({ title, description, assignedTo }) {
     const res = await fetch(API, {
       method: "POST",
       headers: authHeader(),
-      body: JSON.stringify({ title, description }),
+      body: JSON.stringify({ title, description, assignedTo }),
     });
     if (!res.ok) {
       const err = await res.json();
@@ -239,6 +257,11 @@ export default function BoardPage() {
             {activeTask ? (
               <div className="task-card task-card-overlay">
                 <p className="task-card-title">{activeTask.title}</p>
+                {activeTask.assignedTo ? (
+                  <p className="task-card-assignee">Assigned to: {activeTask.assignedTo.name}</p>
+                ) : (
+                  <p className="task-card-assignee">Unassigned</p>
+                )}
                 {activeTask.description && (
                   <p className="task-card-desc">{activeTask.description}</p>
                 )}
@@ -253,6 +276,7 @@ export default function BoardPage() {
         <AddTaskModal
           onAdd={handleAddTask}
           onClose={() => setShowModal(false)}
+          users={users}
         />
       )}
     </div>

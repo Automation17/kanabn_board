@@ -1,7 +1,8 @@
 import { useState } from "react";
 
-export default function AddTaskModal({ onAdd, onClose }) {
+export default function AddTaskModal({ onAdd, onClose, users }) {
   const [title, setTitle] = useState("");
+  const [assignee, setAssignee] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -12,7 +13,7 @@ export default function AddTaskModal({ onAdd, onClose }) {
     setLoading(true);
     setError(null);
     try {
-      await onAdd({ title: title.trim(), description: description.trim() });
+      await onAdd({ title: title.trim(), description: description.trim(), assignedTo: assignee });
       onClose();
     } catch (err) {
       setError(err.message || "Failed to add task.");
@@ -32,7 +33,7 @@ export default function AddTaskModal({ onAdd, onClose }) {
         {error && <p className="modal-error">{error}</p>}
 
         <form onSubmit={handleSubmit} className="modal-form">
-          <label className="modal-label">Title *</label>
+          <label className="modal-label">Title*</label>
           <input
             id="task-title"
             type="text"
@@ -43,6 +44,21 @@ export default function AddTaskModal({ onAdd, onClose }) {
             autoFocus
             required
           />
+
+          <label className="modal-label">Assignee*</label>
+          <select
+            name="assign-employee"
+            id="task-assign"
+            className="modal-input"
+            value={assignee}
+            onChange={(event) => setAssignee(event.target.value)}
+            required
+          >
+            <option value="" disabled>Select an assignee…</option>
+            {users?.map(user => (
+              <option key={user._id} value={user._id}>{user.name}</option>
+            ))}
+          </select>
 
           <label className="modal-label">Description</label>
           <textarea

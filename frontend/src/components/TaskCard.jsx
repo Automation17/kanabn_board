@@ -33,6 +33,11 @@ export default function TaskCard({ task, onDelete, /* onEdit */ }) {
       {/* Content */}
       <div className="task-card-content">
         <p className="task-card-title">{task.title}</p>
+        {task.assignedTo ? (
+          <p className="task-card-assignee">Assigned to: {task.assignedTo.name}</p>
+        ) : (
+          <p className="task-card-assignee">Unassigned</p>
+        )}
         {task.description && (
           <p className="task-card-desc">{task.description}</p>
         )}

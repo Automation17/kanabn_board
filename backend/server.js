@@ -10,6 +10,7 @@ const initSocket = require("./socket/socket");
 // ===== Import Routes =====
 const authRoutes = require('./routes/auth.routes');
 const taskRoutes = require('./routes/task.router');
+const userRoutes = require('./routes/user.routes');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -41,6 +42,9 @@ app.use('/api/auth', authRoutes);
 
 // Task routes → /api/tasks
 app.use('/api/tasks', taskRoutes);
+
+// User routes → /api/users
+app.use('/api/users', userRoutes);
 
 // ===== Start the Server =====
 
